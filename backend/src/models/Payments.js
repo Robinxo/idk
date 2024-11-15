@@ -1,12 +1,12 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const PaymentSchema = new mongoose.Schema(
   {
     Booking: {
       type: mongoose.Types.ObjectId,
-      ref: 'Booking',
+      ref: "Booking",
       required: true,
-      description: 'The booking info',
+      description: "The booking info",
     },
     amount: {
       type: Number,
@@ -30,4 +30,4 @@ const PaymentSchema = new mongoose.Schema(
   },
 );
 
-export const Payment = mongoose.model('Payment', PaymentSchema);
+export const Payment = mongoose.model("Payment", PaymentSchema);

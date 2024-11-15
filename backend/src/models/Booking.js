@@ -1,32 +1,32 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const BookingSchema = new mongoose.Schema(
   {
     movie: {
       type: mongoose.Types.ObjectId,
-      ref: 'Movies',
+      ref: "Movies",
       required: true,
-      description: 'The ID of the movie being booked.',
+      description: "The ID of the movie being booked.",
     },
     date: {
       type: Date,
       required: true,
-      description: 'The date and time of the booking.',
+      description: "The date and time of the booking.",
     },
     seatNumber: {
       type: Number,
       required: true,
-      description: 'The seat number assigned for the booking.',
+      description: "The seat number assigned for the booking.",
     },
     user: {
       type: mongoose.Types.ObjectId,
-      ref: 'User',
+      ref: "User",
       required: true,
-      description: 'The ID of the user who made the booking.',
+      description: "The ID of the user who made the booking.",
     },
   },
   {
     timestamps: true, // Automatically adds createdAt and updatedAt fields
   },
 );
-export const Booking = mongoose.model('Booking', BookingSchema);
+export const Booking = mongoose.model("Booking", BookingSchema);

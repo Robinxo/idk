@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const AdminSchema = new mongoose.Schema(
   {
@@ -7,20 +7,20 @@ const AdminSchema = new mongoose.Schema(
       required: true,
       unique: true,
       match: /^.+@.+\..+$/, // Basic email format validation
-      description: 'The email address of the user, must be unique.',
+      description: "The email address of the user, must be unique.",
     },
     password: {
       type: String,
       required: true,
       minlength: 6,
       description:
-        'The password for the user account, must be at least 6 characters long.',
+        "The password for the user account, must be at least 6 characters long.",
     },
     addedMovies: [
       {
         type: mongoose.Types.ObjectId,
-        ref: 'Movies',
-        description: 'List of movie references added by the user.',
+        ref: "Movies",
+        description: "List of movie references added by the user.",
       },
     ],
   },
@@ -29,4 +29,4 @@ const AdminSchema = new mongoose.Schema(
   },
 );
 
-export const admin = mongoose.model('admin', AdminSchema);
+export const Admin = mongoose.model("Admin", AdminSchema);

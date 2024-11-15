@@ -1,9 +1,9 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const screenSchema = new mongoose.Schema({
-  theater: { type: mongoose.Types.ObjectId, ref: 'Theater', required: true },
+  theater: { type: mongoose.Types.ObjectId, ref: "Theater", required: true },
   screenNumber: { type: Number, required: true },
-  seats: [{ type: mongoose.Types.ObjectId, ref: 'Seat' }],
+  seats: [{ type: mongoose.Types.ObjectId, ref: "Seat" }],
 });
 
-export const Screen = mongoose.model('Screen', screenSchema);
+export const Screen = mongoose.model("Screen", screenSchema);

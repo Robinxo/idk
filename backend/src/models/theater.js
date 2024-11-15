@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const theaterSchema = new mongoose.Schema(
   {
@@ -9,4 +9,4 @@ const theaterSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-export const Theater = mongoose.model('Theater', theaterSchema);
+export const Theater = mongoose.model("Theater", theaterSchema);

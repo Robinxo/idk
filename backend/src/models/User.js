@@ -1,12 +1,12 @@
-import mongoose from 'mongoose';
-import bcrypt from 'bcrypt';
+import mongoose from "mongoose";
+import bcrypt from "bcrypt";
 
 const UserSchema = new mongoose.Schema(
   {
-    name: {
+    username: {
       type: String,
       required: true,
-      description: 'The name of the user.',
+      description: "The name of the user.",
     },
 
     email: {
@@ -14,7 +14,7 @@ const UserSchema = new mongoose.Schema(
       required: true,
       unique: true,
       match: /^.+@.+\..+$/, // Basic email format validation
-      description: 'The email address of the user, must be unique.',
+      description: "The email address of the user, must be unique.",
     },
 
     password: {
@@ -22,21 +22,21 @@ const UserSchema = new mongoose.Schema(
       required: true,
       minLength: 6,
       description:
-        'The password for the user account, must be at least 6 characters long.',
+        "The password for the user account, must be at least 6 characters long.",
     },
     bookings: [
       {
         type: mongoose.Types.ObjectId,
-        ref: 'Booking',
-        description: 'List of booking references made by the user.',
+        ref: "Booking",
+        description: "List of booking references made by the user.",
       },
     ],
   },
   { timestamps: true },
 );
 
-UserSchema.pre('save', async (next) => {
-  if (this.isModified('password')) return next();
+UserSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
   this.password = bcrypt.hash(this.password, 10);
   next();
 });
@@ -58,4 +58,4 @@ UserSchema.methods.generateAccessToken = function () {
   );
 };
 
-export const user = mongoose.model('User', UserSchema);
+export const user = mongoose.model("User", UserSchema);
