@@ -34,16 +34,26 @@ const UserSchema = new mongoose.Schema(
   },
   { timestamps: true },
 );
-
 UserSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next();
-  this.password = bcrypt.hash(this.password, 10);
-  next();
+  console.log("Pre-save hook running");
+
+  if (!this.isModified("password")) {
+    console.log("Password not modified, skipping hash");
+    return next();
+  }
+
+  try {
+    // Hash the password
+    console.log("Hashing password");
+    this.password = await bcrypt.hash(this.password, 10);
+    console.log("Password hashed successfully");
+    next();
+  } catch (err) {
+    // Pass error to next middleware
+    next(err);
+  }
 });
 
-UserSchema.methods.isPasswordCorrect = async (password) => {
-  return await bcrypt.compare(password, this.password);
-};
 UserSchema.methods.generateAccessToken = function () {
   jwt.sign(
     {

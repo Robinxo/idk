@@ -9,7 +9,7 @@ const BookingSchema = new mongoose.Schema(
       description: "The ID of the movie being booked.",
     },
     date: {
-      type: Date,
+      type: String,
       required: true,
       description: "The date and time of the booking.",
     },

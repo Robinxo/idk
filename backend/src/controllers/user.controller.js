@@ -4,10 +4,6 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 
 const registerUser = asyncHandler(async (req, res) => {
   const { email, username, password } = req.body;
-  console.log("email:", email);
-  console.log("password:", password);
-  console.log("username :", username);
-
   if ([username, email, password].some((field) => field?.trim() === "")) {
     throw new ApiError(400, "All fields are required");
   }
@@ -16,10 +12,12 @@ const registerUser = asyncHandler(async (req, res) => {
     $or: [{ username }, { email }],
   });
   if (existedUser) {
-    throw new ApiError(409, "User with error");
+    throw new ApiError(409, "User already exist!\n");
   }
   const newUser = new user({ email, password, username });
   await newUser.save();
+  console.log("User created successfully");
+  console.log(newUser);
 });
 
 export default registerUser;
