@@ -66,6 +66,7 @@ UserSchema.methods.generateAccessToken = function () {
       expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
     },
   );
+  return token;
 };
-
-export const user = mongoose.model("User", UserSchema);
+const User = mongoose.model("User", UserSchema);
+export default User;

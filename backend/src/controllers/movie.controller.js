@@ -1,4 +1,4 @@
-import { movie } from "../models/Movies.js";
+import { Movie } from "../models/Movies.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import ApiError from "../utils/ApiError.js";
 
@@ -17,14 +17,14 @@ const addMovie = asyncHandler(async (req, res) => {
   ) {
     throw new ApiError(400, "All fields are required");
   }
-  const newMovie = new movie({
+  const newMovie = new Movie({
     title,
     description,
     actors,
     releaseDate,
     posterUrl,
   });
-  const existedMovie = await movie.findOne({
+  const existedMovie = await Movie.findOne({
     $or: [{ title, description, actors, releaseDate, posterUrl }],
   });
   if (existedMovie) {
@@ -36,4 +36,16 @@ const addMovie = asyncHandler(async (req, res) => {
     message: "Movie added successfully",
   });
 });
-export default addMovie;
+const deleteMovie = asyncHandler(async (req, res) => {
+  const { title } = req.body;
+  if ([title].some((field) => field?.trim() === "")) {
+    throw new ApiError(400, "All fields are required");
+  }
+  const movie = await Movie.findOneAndDelete({ title });
+  if (!movie) {
+    throw new ApiError(404, "Movie not found");
+  }
+  res.status(200).json({ message: "Movie deleted successfully" });
+});
+
+export { addMovie, deleteMovie };
