@@ -7,7 +7,6 @@ const addMovie = asyncHandler(async (req, res) => {
   console.log("title:", title);
   console.log("description:", description);
   console.log("actors:", actors);
-  console.log("releaseDate:", releaseDate);
   console.log("posterUrl:", posterUrl);
 
   if (
