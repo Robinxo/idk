@@ -4,6 +4,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import User from "../models/User.js";
 import Booking from "../models/Booking.js";
 import Movie from "../models/Movie.js";
+
 const bookMovie = asyncHandler(async (req, res) => {
   const { movieId, date, seatNumber } = req.body;
   const user = req.user._id;

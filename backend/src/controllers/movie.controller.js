@@ -21,11 +21,10 @@ const addMovie = asyncHandler(async (req, res) => {
     title,
     description,
     actors,
-    releaseDate,
     posterUrl,
   });
   const existedMovie = await Movie.findOne({
-    $or: [{ title, description, actors, releaseDate, posterUrl }],
+    $or: [{ title, description, actors, posterUrl }],
   });
   if (existedMovie) {
     throw new ApiError(409, "Movie already exist!");
