@@ -9,11 +9,7 @@ const addMovie = asyncHandler(async (req, res) => {
   console.log("actors:", actors);
   console.log("posterUrl:", posterUrl);
 
-  if (
-    [title, description, releaseDate, posterUrl].some(
-      (field) => field?.trim() === "",
-    )
-  ) {
+  if ([title, description, posterUrl].some((field) => field?.trim() === "")) {
     throw new ApiError(400, "All fields are required");
   }
   const newMovie = new Movie({
@@ -21,6 +17,7 @@ const addMovie = asyncHandler(async (req, res) => {
     description,
     actors,
     posterUrl,
+    releaseDate,
   });
   const existedMovie = await Movie.findOne({
     $or: [{ title, description, actors, posterUrl }],

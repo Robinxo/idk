@@ -4,8 +4,6 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 
 const registerAdmin = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
-  console.log("email:", email);
-  console.log("password:", password);
 
   if ([email, password].some((field) => field?.trim() === "")) {
     throw new ApiError(400, "All fields are required");
@@ -17,7 +15,42 @@ const registerAdmin = asyncHandler(async (req, res) => {
     throw new ApiError(409, "Admin already exist!");
   }
   const newAdmin = new Admin({ email, password: password });
+
   await newAdmin.save();
+  res.status(201).json({ message: "Admin created successfully" });
 });
 
-export default registerAdmin;
+// Login Admin
+const loginAdmin = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email?.trim() || !password?.trim()) {
+    throw new ApiError(400, "All fields are required");
+  }
+
+  const existingAdmin = await Admin.findOne({ email });
+  if (!existingAdmin) {
+    throw new ApiError(404, "Admin not found");
+  }
+
+  // Compare passwords
+  const isPasswordCorrect = await existingAdmin.comparePassword(password);
+  if (!isPasswordCorrect) {
+    throw new ApiError(401, "Invalid email or password");
+  }
+
+  // Generate token
+  const token = existingAdmin.generateAccessToken();
+
+  res.status(200).json({
+    message: "Login successful",
+    token,
+  });
+});
+
+const getAllAdmin = asyncHandler(async (req, res) => {
+  const admins = await Admin.find();
+  res.status(200).json({ admins });
+});
+
+export { loginAdmin, registerAdmin, getAllAdmin };

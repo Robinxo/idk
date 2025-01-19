@@ -15,8 +15,8 @@ router.post("/login", logIn);
 
 // User Management Routes
 router.get("/getAllUsers", getAllUsers);
-router.get("/getUserById/:id", getUserById); // Include dynamic parameter for ID
-router.put("/updateUser/:id", updateUser); // Use PUT for updates
-router.delete("/deleteUser/:id", deleteUser); // Use DELETE for deletions
+router.get("/getUserById/:id", getUserById);
+router.put("/updateUser/:id", updateUser);
+router.delete("/deleteUser/:id", deleteUser);
 
 export default router;

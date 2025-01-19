@@ -37,12 +37,11 @@ const MovieSchema = new mongoose.Schema(
       type: mongoose.Types.ObjectId,
       ref: "admin",
       // For future need to add the admin authenticator
-      // required: true,
-      description: "The ID of the admin who added the movie.",
+      required: true,
     },
   },
   {
-    timestamps: true, // Automatically adds createdAt and updatedAt fields
+    timestamps: true,
   },
 );
 export const Movie = mongoose.model("Movies", MovieSchema);
