@@ -23,6 +23,7 @@ const authAdmin = asyncHandler(async (req, res, next) => {
     }
     req.admin = admin;
     next();
+    return admin;
   } catch (error) {
     throw new ApiError(403, "Invalid or expired token");
   }

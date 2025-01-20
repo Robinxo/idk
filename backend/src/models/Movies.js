@@ -35,7 +35,7 @@ const MovieSchema = new mongoose.Schema(
     ],
     admin: {
       type: mongoose.Types.ObjectId,
-      ref: "admin",
+      ref: "Admin",
       // For future need to add the admin authenticator
       required: true,
     },

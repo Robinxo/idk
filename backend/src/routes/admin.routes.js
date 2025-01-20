@@ -8,7 +8,7 @@ import {
 
 const adminRouter = Router();
 
-adminRouter.post("/login", authAdmin, loginAdmin);
+adminRouter.post("/login", loginAdmin);
 adminRouter.post("/register", registerAdmin);
 adminRouter.get("/allAdmin", authAdmin, getAllAdmin);
 
