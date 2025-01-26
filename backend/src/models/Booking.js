@@ -9,7 +9,7 @@ const BookingSchema = new mongoose.Schema(
       description: "The ID of the movie being booked.",
     },
     date: {
-      type: String,
+      type: Date,
       required: true,
       description: "The date and time of the booking.",
     },
@@ -29,4 +29,6 @@ const BookingSchema = new mongoose.Schema(
     timestamps: true, // Automatically adds createdAt and updatedAt fields
   },
 );
-export const Booking = mongoose.model("Booking", BookingSchema);
+const Booking = mongoose.model("Booking", BookingSchema);
+
+export default Booking;

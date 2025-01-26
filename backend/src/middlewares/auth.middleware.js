@@ -1,17 +1,14 @@
 import jwt from "jsonwebtoken";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { Admin } from "../models/Admin.js";
+import { User } from "../models/User.js";
 import ApiError from "../utils/ApiError.js";
 import "dotenv/config";
 
 const authAdmin = asyncHandler(async (req, res, next) => {
-  const authHeaders = req.headers.authorization;
+  // const authHeaders = req.headers.authorization;
+  const token = req.cookies.token;
 
-  if (!authHeaders || !authHeaders.startsWith("Bearer")) {
-    throw new ApiError(401, "Unauthorized");
-  }
-
-  const token = authHeaders.split(" ")[1];
   if (!token) {
     throw new ApiError(401, "Unauthorized");
   }
@@ -23,10 +20,29 @@ const authAdmin = asyncHandler(async (req, res, next) => {
     }
     req.admin = admin;
     next();
-    return admin;
   } catch (error) {
     throw new ApiError(403, "Invalid or expired token");
   }
 });
 
-export default authAdmin;
+const authUser = asyncHandler(async (req, res, next) => {
+  const token = req.cookies.token;
+
+  if (!token) {
+    throw new ApiError(401, "Unauthorized");
+  }
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded._id);
+    console.log(user);
+    if (!user) {
+      throw new ApiError(404, "User not found");
+    }
+    req.user = user;
+    next();
+  } catch (error) {
+    throw new ApiError(403, "Invalid or expired token");
+  }
+});
+
+export { authAdmin, authUser };

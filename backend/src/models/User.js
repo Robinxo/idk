@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import "dotenv/config";
 
 const UserSchema = new mongoose.Schema(
   {
@@ -35,7 +37,7 @@ const UserSchema = new mongoose.Schema(
   { timestamps: true },
 );
 UserSchema.pre("save", async function (next) {
-  console.log("Pre-save hook running");
+  console.log("Pre-save hook running 😛");
 
   if (!this.isModified("password")) {
     console.log("Password not modified, skipping hash");
@@ -55,18 +57,16 @@ UserSchema.pre("save", async function (next) {
 });
 
 UserSchema.methods.generateAccessToken = function () {
-  jwt.sign(
+  return jwt.sign(
     {
       _id: this._id,
       email: this.email,
       username: this.username,
     },
-    process.env.ACCESS_TOKEN_SECRET,
+    process.env.JWT_SECRET,
     {
-      expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
+      expiresIn: "12h",
     },
   );
-  return token;
 };
-const User = mongoose.model("User", UserSchema);
-export default User;
+export const User = mongoose.model("User", UserSchema);

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import authAdmin from "../middlewares/auth.middleware.js";
+import { authAdmin } from "../middlewares/auth.middleware.js";
 import {
   registerAdmin,
   getAllAdmin,

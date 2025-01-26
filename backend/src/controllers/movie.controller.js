@@ -1,11 +1,12 @@
-import { Movie } from "../models/Movies.js";
+import Movie from "../models/Movies.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import ApiError from "../utils/ApiError.js";
 import mongoose from "mongoose";
 import { Admin } from "../models/Admin.js";
+import ApiError from "../utils/ApiError.js";
 
 const addMovie = asyncHandler(async (req, res) => {
   const adminId = req.admin;
+
   const { title, description, actors, releaseDate, posterUrl } = req.body;
 
   if ([title, description, posterUrl].some((field) => field?.trim() === "")) {

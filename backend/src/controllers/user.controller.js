@@ -1,9 +1,10 @@
-import User from "../models/User.js";
+import { User } from "../models/User.js";
 import ApiError from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import bcrypt from "bcrypt";
 
 // Register user
+
 const signUp = asyncHandler(async (req, res) => {
   const { email, username, password } = req.body;
   if ([username, email, password].some((field) => field?.trim() === "")) {
@@ -42,9 +43,17 @@ const logIn = asyncHandler(async (req, res, next) => {
   if (!isPasswordValid) {
     throw new ApiError(401, "Invalid password!");
   }
-  return res
-    .status(200)
-    .json({ message: "Login Successful", id: existedUser._id });
+
+  const token = existedUser.generateAccessToken();
+
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    samesite: "strict",
+    maxAge: 12 * 60 * 60 * 1000, // 12 hours
+  });
+
+  return res.status(200).json({ message: "Login Successful" });
 });
 
 // get all users
@@ -72,7 +81,7 @@ const deleteUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   let wantToDelete = await User.findOne({ email });
 
-  const isPasswordValid = await bcrypt.compare(password, wantToDelete.password);
+  const isPasswordValid = bcrypt.compare(password, wantToDelete.password);
   if (isPasswordValid) {
     await User.findOneAndDelete({ email });
     res.status(200).json({ message: "User deleted successfully" });

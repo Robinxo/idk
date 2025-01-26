@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { addMovie, deleteMovie } from "../controllers/movie.controller.js";
-import authAdmin from "../middlewares/auth.middleware.js";
+import { authAdmin } from "../middlewares/auth.middleware.js";
 
 const movieRouter = Router();
 

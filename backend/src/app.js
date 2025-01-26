@@ -26,10 +26,12 @@ app.use((req, res, next) => {
 import router from "./routes/user.routes.js";
 import adminRouter from "./routes/admin.routes.js";
 import movieRouter from "./routes/movie.routes.js";
+import bookingRouter from "./routes/booking.routes.js";
 
 // routes declaration
 app.use("/users", router);
 app.use("/admin", adminRouter);
 app.use("/movies", movieRouter);
+app.use("/bookings", bookingRouter);
 
 export default app;

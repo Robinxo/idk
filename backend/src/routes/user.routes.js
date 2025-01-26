@@ -10,6 +10,7 @@ import {
 
 const router = Router();
 
+// User login and signup routes
 router.post("/signUp", signUp);
 router.post("/login", logIn);
 

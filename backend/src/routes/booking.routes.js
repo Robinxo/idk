@@ -1,6 +1,12 @@
 import { Router } from "express";
+import { authUser } from "../middlewares/auth.middleware.js";
 import { bookMovie, deleteBooking } from "../controllers/booking.controller.js";
 
-const router = Router();
+const bookingrouter = Router();
 
-router.post("/bookMovie", bookMovie);
+bookingrouter.route("/bookMovie").post(authUser, bookMovie);
+bookingrouter
+  .route("/deleteBooking/:bookingId")
+  .delete(authUser, deleteBooking);
+
+export default bookingrouter;

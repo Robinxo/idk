@@ -32,7 +32,7 @@ const AdminSchema = new mongoose.Schema(
   },
 );
 AdminSchema.pre("save", async function (next) {
-  console.log("Pre-save hook running");
+  console.log("Pre-save hook running 😛 ");
   if (!this.isModified("password")) {
     console.log("Password not modified, skipping hash");
     return next();
