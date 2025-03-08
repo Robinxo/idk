@@ -11,7 +11,7 @@ import {
 const router = Router();
 
 // User login and signup routes
-router.post("/signUp", signUp);
+router.post("/signup", signUp);
 router.post("/login", logIn);
 
 // User Management Routes

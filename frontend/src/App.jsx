@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState } from "react"
+import { Route, Routes } from "react-router";
+import Auth from "./components/Auth/Auth.jsx";
 import "./App.css";
 
 function App() {
@@ -6,7 +8,14 @@ function App() {
 
   return (
     <>
-      <h1 className="text-sky-800 text-3xl">hi </h1>
+      <div>
+      <h1>Hello</h1>
+        <section>
+  <Routes>
+        <Route path="/auth" element={<Auth/>} />
+        </Routes>
+        </section>
+      </div>
     </>
   );
 }

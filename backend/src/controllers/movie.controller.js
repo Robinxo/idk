@@ -52,4 +52,9 @@ const deleteMovie = asyncHandler(async (req, res) => {
   res.status(200).json({ message: "Movie deleted successfully" });
 });
 
-export { addMovie, deleteMovie };
+const getAllmovies = asyncHandler(async (req, res) => {
+  const movies = await Movie.find();
+  res.status(200).json({ movies });
+});
+
+export { addMovie, deleteMovie ,getAllmovies };
