@@ -18,9 +18,9 @@ export const sendUserAuthRequest = async (authData, signup) => {
 
         const response = await axios.post(
             `/user/${signup ? "signup" : "login"}`,{
-            username: signup ? data.username : "",
-            email: data.email,
-            password: data.password
+            username: signup ? authData.username : "",
+            email: authData.email,
+            password: authData.password
         });
 
 
@@ -36,3 +36,45 @@ export const sendUserAuthRequest = async (authData, signup) => {
         return null; // Return null if there's an error
     }
 };
+export const getAdminById = async () => {
+    const adminId = localStorage.getItem("adminId");
+    const res = await axios.get(`/admin/${adminId}`)
+    .catch(err => console.log(err));
+    if (res.status !== 200) { 
+        return console.log("Unexpected Error");
+    }
+    const resData = await res.data;
+    return resData;   
+}
+export const addMovie = async (data) => {
+    const res=await axios.post('/movies/add',{
+        title:data.title,
+        description:data.description,
+        releaseDate:data.releaseDate,
+        posterUrl:data.posterUrl,
+        actors:data.actors,
+        admin:localStorage.getItem('adminId'),
+    },{
+        headers:{
+            Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
+    }).catch((err)=>console.log(err))
+    if (res.status !== 201) {
+                return console.log("Unexpected Error");
+            }
+            const resData = await res.data;
+            return resData;
+}
+
+export const sendAdminAuthRequest = async (data) => {
+    const res = await axios.post("/admin/login", {
+        email: data.email,
+        password: data.password
+    }).catch((err) => console.log(err))
+
+    if(res.status !== 200) {
+        return console.log("Unexpected error occurred.")
+    }
+    const resData = await res.data;
+    return resData;
+
