@@ -6,6 +6,8 @@ import Admin from "./components/Admin/Admin";
 import Header from "./components/Headers.jsx";
 import "./App.css";
 import Homepage from "./components/Homepage.jsx";
+import Movies from "./components/Movies/Movies.jsx";
+import AddMovies from "./components/Movies/AddMovie.jsx";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -17,7 +19,9 @@ function App() {
         <section>
           <Routes>
             <Route path="/" element={<Homepage />} />
+            <Route path="/movies" element={<Movies />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/add" element={<AddMovies />} />
             <Route path="/userAdmin" element={<AdminProfile />} />
             <Route path="/admin" element={<Admin />} />
           </Routes>
