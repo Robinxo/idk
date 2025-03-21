@@ -1,8 +1,8 @@
-import React from 'react'
-import AuthForm from './AuthForm.jsx'
-import { sendUserAuthRequest } from '../../Api-helper/api-helpers.js'
-import { useDispatch } from 'react-redux'
-import { userActions } from '../../store'
+import React from "react";
+import AuthForm from "./AuthForm.jsx";
+import { sendUserAuthRequest } from "../../Api-helper/api-helpers.js";
+import { useDispatch } from "react-redux";
+import { userActions } from "../../store";
 
 const Auth = () => {
   const dispatch = useDispatch();
@@ -14,7 +14,7 @@ const Auth = () => {
     }
 
     console.log("Received Data:", data);
-    
+
     dispatch(userActions.login());
 
     if (data.id) {
@@ -27,7 +27,7 @@ const Auth = () => {
   const getData = (data) => {
     console.log("Calling API with:", data);
 
-    sendUserAuthRequest(data.inputs, data.signup)
+    sendUserAuthRequest(data.inputs, data.isSignup) // Pass the signup flag.
       .then(onResReceived)
       .catch((err) => {
         console.error("API Call Failed:", err);

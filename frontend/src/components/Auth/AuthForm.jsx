@@ -15,19 +15,15 @@ const labelStyle = { mt: 1, mb: 2 };
 
 const AuthForm = ({ onSubmit, isAdmin }) => {
   const navigate = useNavigate();
-
   const crossHandler = () => {
     navigate("/");
   };
-
   const [inputs, setInputs] = useState({
     username: "",
     email: "",
     password: "",
   });
-
   const [isSignup, setIsSignup] = useState(false);
-
   const handleChange = (e) => {
     setInputs((prevState) => ({
       ...prevState,
@@ -37,11 +33,20 @@ const AuthForm = ({ onSubmit, isAdmin }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit({
-      username: inputs.username, // ✅ Fixed API key
+    let authData = {
       email: inputs.email,
       password: inputs.password,
-      signup: isAdmin ? false : isSignup,
+    };
+
+    if (!isAdmin && isSignup) {
+      // User signup
+      authData.username = inputs.username;
+    }
+
+    onSubmit({
+      inputs: authData,
+      isSignup: !isAdmin && isSignup, // Pass signup flag.
+      isAdmin: isAdmin, // Pass isAdmin flag.
     });
   };
 
