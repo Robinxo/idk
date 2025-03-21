@@ -16,7 +16,7 @@ router.post("/login", logIn);
 
 // User Management Routes
 router.get("/getAllUsers", getAllUsers);
-router.get("/getUserById/:id", getUserById);
+router.get("/:id", getUserById);
 router.put("/updateUser/:id", updateUser);
 router.delete("/deleteUser/:id", deleteUser);
 

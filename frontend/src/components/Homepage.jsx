@@ -15,7 +15,7 @@ const Homepage = () => {
     <Box width={"100%"} height={"100%"} margin={"auto"} marginTop={2}>
       <Box margin={"auto"} width={"70%"} height={"40vh"} padding={2}>
         <img
-          src="https://i.ytimg.com/vi/flXhA8DOi84/maxresdefault.jpg"
+          src="https://images.livemint.com/img/2022/07/22/1140x641/294778926_174266841737917_6086865701047889521_n_1658473701055_1658473723121_1658473723121.webp"
           alt="movie-banner"
           width={"100%"}
           height={"100%"}

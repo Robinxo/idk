@@ -8,6 +8,8 @@ import "./App.css";
 import Homepage from "./components/Homepage.jsx";
 import Movies from "./components/Movies/Movies.jsx";
 import AddMovies from "./components/Movies/AddMovie.jsx";
+import { Slider } from "@mui/material";
+import HorizontalLinearStepper from "./components/slider.jsx";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -19,11 +21,12 @@ function App() {
         <section>
           <Routes>
             <Route path="/" element={<Homepage />} />
+            <Route path="/ex" element={<HorizontalLinearStepper />} />
             <Route path="/movies" element={<Movies />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/add" element={<AddMovies />} />
-            <Route path="/userAdmin" element={<AdminProfile />} />
-            <Route path="/admin" element={<Admin />} />
+            {/*    <Route path="/userAdmin" element={</>} />  */}
+            <Route path="/admin" element={<AdminProfile />} />
           </Routes>
         </section>
       </div>

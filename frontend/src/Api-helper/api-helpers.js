@@ -34,7 +34,9 @@ export const sendUserAuthRequest = async (authData, signup) => {
   }
 };
 export const getAdminById = async () => {
+  localStorage.setItem("adminId", "67c9b70a30af3112fa22c455");
   const adminId = localStorage.getItem("adminId");
+  console.log(adminId);
   const res = await axios
     .get(`/admin/${adminId}`)
     .catch((err) => console.log(err));
@@ -65,6 +67,17 @@ export const addMovie = async (data) => {
     .catch((err) => console.log(err));
   if (res.status !== 201) {
     return console.log("Unexpected Error");
+  }
+  const resData = await res.data;
+  return resData;
+};
+
+export const getMoviedetails = async (id) => {
+  const res = await axios.get(`/movies/${id}`).catch((err) => {
+    console.log(err);
+  });
+  if (res.status !== 200) {
+    return console.log("unexpected error");
   }
   const resData = await res.data;
   return resData;
