@@ -35,7 +35,6 @@ export const sendUserAuthRequest = async (authData, signup) => {
 };
 export const getAdminById = async () => {
   const adminId = localStorage.getItem("adminId");
-  console.log(adminId);
   const res = await axios
     .get(`/admin/${adminId}`)
     .catch((err) => console.log(err));
@@ -45,6 +44,7 @@ export const getAdminById = async () => {
   const resData = await res.data;
   return resData;
 };
+
 export const addMovie = async (data) => {
   const res = await axios
     .post(

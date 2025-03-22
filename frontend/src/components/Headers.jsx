@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import TheaterComedyIcon from "@mui/icons-material/TheaterComedy";
 import { getAllMovies } from "../Api-helper/api-helpers.js";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router"; // Import useLocation
 import { useDispatch, useSelector } from "react-redux";
 import { adminActions, userActions } from "../store";
 
@@ -19,7 +19,23 @@ const Header = () => {
   const dispatch = useDispatch();
   const isAdminLoggedIn = useSelector((state) => state.admin.isLoggedIn);
   const isUserLoggedIn = useSelector((state) => state.user.isLoggedIn);
-  const [value, setvalue] = useState(0);
+
+  console.log("isAdminLoggedIn:", isAdminLoggedIn);
+  console.log("isUserLoggedIn:", isUserLoggedIn);
+
+  const location = useLocation(); // Get current location
+  const [value, setValue] = useState(location.pathname); // Initialize value with current path
+
+  useEffect(() => {
+    console.log("Location changed:", location.pathname);
+    setValue(location.pathname); // Update value when location changes
+  }, [location.pathname]);
+
+  const handleChange = (event, newValue) => {
+    console.log("Tab changed:", newValue);
+    setValue(newValue);
+  };
+
   const [movies, setmovies] = useState([]);
   useEffect(() => {
     getAllMovies()
@@ -57,41 +73,72 @@ const Header = () => {
         </Box>
         <Box display={"flex"}>
           <Tabs
-            indicatorColor="primary"
-            textColor="inherit"
             value={value}
-            onChange={(e, val) => {
-              setvalue(val);
-            }}
+            indicatorColor="secondary"
+            textColor="inherit"
+            onChange={handleChange}
           >
-            <Tab LinkComponent={Link} to="/movies" label="Movies" />
+            <Tab
+              LinkComponent={Link}
+              to="/movies"
+              label="Movies"
+              value="/movies"
+            />
             {!isAdminLoggedIn && !isUserLoggedIn && (
               <>
-                <Tab LinkComponent={Link} to="/auth" label="Auth" />
-                <Tab LinkComponent={Link} to="/admin" label="Admin" />
+                <Tab
+                  LinkComponent={Link}
+                  to="/auth"
+                  label="Auth"
+                  value="/auth"
+                />
+                <Tab
+                  LinkComponent={Link}
+                  to="/admin"
+                  label="Admin"
+                  value="/admin"
+                />
               </>
             )}
             {isUserLoggedIn && (
               <>
-                <Tab LinkComponent={Link} to="/user" label="Profile" />
+                <Tab
+                  LinkComponent={Link}
+                  to="/user"
+                  label="Profile"
+                  value="/user"
+                />
                 <Tab
                   onClick={() => logout(false)}
                   LinkComponent={Link}
                   to="/"
                   label="Logout"
+                  value="/"
                 />
               </>
             )}
             {isAdminLoggedIn && (
               <>
-                <Tab LinkComponent={Link} to="/add" label="Add Movies" />
-                <Tab LinkComponent={Link} to="/admin" label="Profile" />
+                <Tab
+                  LinkComponent={Link}
+                  to="/add"
+                  label="Add Movies"
+                  value="/add"
+                />
+                <Tab
+                  LinkComponent={Link}
+                  to="/admin"
+                  label="Profile"
+                  value="/admin"
+                />
                 <Tab
                   onClick={() => logout(true)}
                   LinkComponent={Link}
                   to="/"
                   label="Logout"
+                  value="/"
                 />
+                {console.log("Admin tabs rendered")}
               </>
             )}
           </Tabs>

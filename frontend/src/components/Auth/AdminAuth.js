@@ -1,15 +1,13 @@
-import React from 'react'
-import AuthForm from './AuthForm'
+import React from "react";
+import AuthForm from "./AuthForm.jsx";
 
 const AdminAuth = () => {
-  const getData=(data)=>{
-    console.log("admin",data)
-  }
+  const getData = (data) => {};
   return (
     <div>
-      <AuthForm onSubmit={getData}/>
+      <AuthForm onSubmit={getData} />
     </div>
-  )
-}
+  );
+};
 
-export default AdminAuth
+export default AdminAuth;

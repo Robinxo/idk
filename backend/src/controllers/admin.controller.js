@@ -41,17 +41,13 @@ const loginAdmin = asyncHandler(async (req, res) => {
 
   // Generate token
   const token = existingAdmin.generateAccessToken();
-
-  res.cookie("token", token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    samesite: "strict",
-    maxAge: 12 * 60 * 60 * 1000, // 12 hours
-  });
-
-  res.status(200).json({
-    message: "Login successful",
-  });
+  return res
+    .status(200)
+    .json({
+      message: "Authentication Successful",
+      token,
+      id: existingAdmin._id,
+    });
 });
 
 const getAllAdmin = asyncHandler(async (req, res) => {
@@ -60,21 +56,17 @@ const getAllAdmin = asyncHandler(async (req, res) => {
 });
 
 const getAdminByID = async (req, res, next) => {
-    const id = req.params.id;
-    let admin;
-    try {
-        admin = await Admin.findById(id)
-        .populate("addedMovies");
-    } catch (err) {
-        return console.log(err);
-    }
-    if (!admin) {
-        return console.log("Cannot find Admin");  
-    }
-    return res.status(200).json({ admin })
+  const id = req.params.id;
+  let admin;
+  try {
+    admin = await Admin.findById(id).populate("addedMovies");
+  } catch (err) {
+    return console.log(err);
+  }
+  if (!admin) {
+    return console.log("Cannot find Admin");
+  }
+  return res.status(200).json({ admin });
 };
- 
 
-export { loginAdmin, registerAdmin, getAllAdmin ,getAdminByID};
-
-
+export { loginAdmin, registerAdmin, getAllAdmin, getAdminByID };
