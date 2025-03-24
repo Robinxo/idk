@@ -10,6 +10,7 @@ const Auth = () => {
   const onResReceived = (data) => {
     if (!data) {
       console.error("Error: Received null or undefined data from API");
+      alert("User not found");
       return;
     }
 

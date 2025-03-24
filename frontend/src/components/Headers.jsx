@@ -1,19 +1,70 @@
 import React, { useEffect, useState } from "react";
 import {
   AppBar,
-  Autocomplete,
   Box,
   IconButton,
   Tab,
   Tabs,
   TextField,
   Toolbar,
+  Autocomplete,
 } from "@mui/material";
 import TheaterComedyIcon from "@mui/icons-material/TheaterComedy";
-import { getAllMovies } from "../Api-helper/api-helpers.js";
 import { Link, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { adminActions, userActions } from "../store";
+import { getAllMovies } from "../Api-helper/api-helpers.js";
+
+const GuestHeader = ({ value, onChange }) => (
+  <Tabs
+    value={value}
+    indicatorColor="secondary"
+    textColor="inherit"
+    onChange={onChange}
+  >
+    <Tab component={Link} to="/movies" label="Movies" value="/movies" />
+    <Tab component={Link} to="/auth" label="Login/signup" value="/auth" />
+  </Tabs>
+);
+
+const UserHeader = ({ value, onChange, handleLogout }) => (
+  <Tabs
+    value={value}
+    indicatorColor="secondary"
+    textColor="inherit"
+    onChange={onChange}
+  >
+    <Tab component={Link} to="/movies" label="Movies" value="/movies" />
+    <Tab component={Link} to="/user" label="Profile" value="/user" />
+    <Tab
+      component={Link}
+      to="/"
+      label="Logout"
+      value="/"
+      onClick={handleLogout}
+    />
+  </Tabs>
+);
+
+const AdminHeader = ({ value, onChange, handleLogout }) => (
+  <Tabs
+    value={value}
+    indicatorColor="secondary"
+    textColor="inherit"
+    onChange={onChange}
+  >
+    <Tab component={Link} to="/movies" label="Movies" value="/movies" />
+    <Tab component={Link} to="/add" label="Add Movies" value="/add" />
+    <Tab component={Link} to="/admin" label="Profile" value="/admin" />
+    <Tab
+      component={Link}
+      to="/"
+      label="Logout"
+      value="/"
+      onClick={handleLogout}
+    />
+  </Tabs>
+);
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -22,34 +73,26 @@ const Header = () => {
   const location = useLocation();
 
   const [movies, setMovies] = useState([]);
-  const [value, setValue] = useState(null);
+  const [value, setValue] = useState("/movies");
+
+  useEffect(() => {
+    setTimeout(() => {
+      setValue(location.pathname);
+    }, 100);
+  }, [location.pathname]);
 
   useEffect(() => {
     let isMounted = true;
-    const fetchMovies = async () => {
-      try {
-        const data = await getAllMovies();
+    getAllMovies()
+      .then((data) => {
         if (isMounted) setMovies(data.movies);
-      } catch (err) {
-        console.error("Error fetching movies:", err);
-      }
-    };
-    fetchMovies();
+      })
+      .catch((err) => console.error("Error fetching movies:", err));
+
     return () => {
       isMounted = false;
     };
   }, []);
-
-  useEffect(() => {
-    const validTabs = ["/movies", "/auth", "/admin", "/user"];
-    if (isAdminLoggedIn) validTabs.push("/add");
-
-    setTimeout(() => {
-      setValue(
-        validTabs.includes(location.pathname) ? location.pathname : "/movies",
-      );
-    }, 100); // Small delay to ensure the Tabs are fully rendered
-  }, [location.pathname, isAdminLoggedIn, isUserLoggedIn]);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -58,8 +101,6 @@ const Header = () => {
   const handleLogout = (isAdmin) => () => {
     dispatch(isAdmin ? adminActions.logout() : userActions.logout());
   };
-
-  if (value === null) return null; // Prevents rendering Tabs before state is set
 
   return (
     <AppBar position="sticky" sx={{ bgcolor: "#2b2d42" }}>
@@ -84,65 +125,21 @@ const Header = () => {
           />
         </Box>
         <Box display="flex">
-          <Tabs
-            value={value}
-            indicatorColor="secondary"
-            textColor="inherit"
-            onChange={handleChange}
-          >
-            <Tab component={Link} to="/movies" label="Movies" value="/movies" />
-            {!isAdminLoggedIn && !isUserLoggedIn && (
-              <>
-                <Tab component={Link} to="/auth" label="Auth" value="/auth" />
-                <Tab
-                  component={Link}
-                  to="/admin"
-                  label="Admin"
-                  value="/admin"
-                />
-              </>
-            )}
-            {isUserLoggedIn && (
-              <>
-                <Tab
-                  component={Link}
-                  to="/user"
-                  label="Profile"
-                  value="/user"
-                />
-                <Tab
-                  onClick={handleLogout(false)}
-                  component={Link}
-                  to="/"
-                  label="Logout"
-                  value="/"
-                />
-              </>
-            )}
-            {isAdminLoggedIn && (
-              <>
-                <Tab
-                  component={Link}
-                  to="/add"
-                  label="Add Movies"
-                  value="/add"
-                />
-                <Tab
-                  component={Link}
-                  to="/admin"
-                  label="Profile"
-                  value="/admin"
-                />
-                <Tab
-                  onClick={handleLogout(true)}
-                  component={Link}
-                  to="/"
-                  label="Logout"
-                  value="/"
-                />
-              </>
-            )}
-          </Tabs>
+          {isAdminLoggedIn ? (
+            <AdminHeader
+              value={value}
+              onChange={handleChange}
+              handleLogout={handleLogout(true)}
+            />
+          ) : isUserLoggedIn ? (
+            <UserHeader
+              value={value}
+              onChange={handleChange}
+              handleLogout={handleLogout(false)}
+            />
+          ) : (
+            <GuestHeader value={value} onChange={handleChange} />
+          )}
         </Box>
       </Toolbar>
     </AppBar>

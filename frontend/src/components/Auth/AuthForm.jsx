@@ -15,7 +15,9 @@ const labelStyle = { mt: 1, mb: 2 };
 
 const AuthForm = ({ onSubmit, isAdmin }) => {
   const navigate = useNavigate();
+  const [open, setOpen] = useState(true); // ✅ State to control dialog visibility
   const crossHandler = () => {
+    setOpen(false); // ✅ Close dialog on cross button click
     navigate("/");
   };
   const [inputs, setInputs] = useState({
@@ -48,10 +50,16 @@ const AuthForm = ({ onSubmit, isAdmin }) => {
       isSignup: !isAdmin && isSignup, // Pass signup flag.
       isAdmin: isAdmin, // Pass isAdmin flag.
     });
+    setOpen(false);
+    navigate("/movies"); // Redirect after login
   };
 
   return (
-    <Dialog PaperProps={{ style: { borderRadius: 20 } }} open={true}>
+    <Dialog
+      PaperProps={{ style: { borderRadius: 20 } }}
+      open={open}
+      onClose={crossHandler}
+    >
       <Box sx={{ ml: "auto", padding: 1 }}>
         <IconButton onClick={crossHandler}>
           <ClearRoundedIcon />
