@@ -43,15 +43,17 @@ const logIn = asyncHandler(async (req, res, next) => {
   if (!isPasswordValid) {
     throw new ApiError(401, "Invalid password!");
   }
+  return res
+    .status(200)
+    .json({ message: "Login Successful", id: existedUser._id });
+  //  const token = existedUser.generateAccessToken();
 
-  const token = existedUser.generateAccessToken();
-
-  res.cookie("token", token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    samesite: "strict",
-    maxAge: 12 * 60 * 60 * 1000, // 12 hours
-  });
+  // res.cookie("token", token, {
+  //   httpOnly: true,
+  //   secure: process.env.NODE_ENV === "production",
+  //   samesite: "strict",
+  //   maxAge: 12 * 60 * 60 * 1000, // 12 hours
+  // });
 
   return res.status(200).json({ message: "Login Successful" });
 });

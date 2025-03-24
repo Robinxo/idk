@@ -11,11 +11,24 @@ export const getAllMovies = async () => {
   return data;
 };
 
+export const getUserDetails = async () => {
+  const id = localStorage.getItem("userId");
+
+  const res = await axios.get(`/users/${id}`).catch((err) => console.log(err));
+
+  if (res.status !== 200) {
+    return console.log("Unexpected Error");
+  }
+  const respData = await res.data;
+  console.log(respData);
+  return respData;
+};
+
 export const sendUserAuthRequest = async (authData, signup) => {
   try {
     console.log("Sending request with data:", authData); // ✅ Debug input data
 
-    const response = await axios.post(`/user/${signup ? "signup" : "login"}`, {
+    const response = await axios.post(`/users/${signup ? "signup" : "login"}`, {
       username: signup ? authData.username : "",
       email: authData.email,
       password: authData.password,
