@@ -15,13 +15,13 @@ const Homepage = () => {
     <Box width={"100%"} height={"100%"} margin={"auto"} marginTop={2}>
       <Box margin={"auto"} width={"70%"} height={"40vh"} padding={2}>
         <img
-          src="https://images.livemint.com/img/2022/07/22/1140x641/294778926_174266841737917_6086865701047889521_n_1658473701055_1658473723121_1658473723121.webp"
+          src="https://img.freepik.com/free-vector/composition-cinema-elements-red-background_1419-2239.jpg"
           alt="movie-banner"
           width={"100%"}
           height={"100%"}
         />
       </Box>
-      <Box padding={5} margin={"auto"} marginTop={7}>
+      <Box padding={2} margin={"auto"}>
         <Typography variant="h4" textAlign={"center"}>
           Latest Release
         </Typography>
@@ -42,6 +42,7 @@ const Homepage = () => {
                 title={movie.title}
                 posterUrl={movie.posterUrl}
                 releaseDate={movie.releaseDate}
+                ticketPrice={movie.ticketPrice}
                 key={index}
               />
             ))}

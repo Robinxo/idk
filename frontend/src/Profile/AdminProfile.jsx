@@ -1,12 +1,27 @@
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { Box } from "@mui/system";
 import React, { Fragment, useEffect, useState } from "react";
-import { getAdminById } from "../Api-helper/api-helpers.js";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { deleteMovie, getAdminById } from "../Api-helper/api-helpers.js";
 
-import { List, ListItem, ListItemText, Typography } from "@mui/material";
+import {
+  Button,
+  List,
+  ListItem,
+  ListItemText,
+  Typography,
+} from "@mui/material";
 
 const AdminProfile = () => {
   const [Admin, setAdmin] = useState();
+  const handleDelete = async (movieTitle) => {
+    try {
+      await deleteMovie({ title: movieTitle }); // Pass an object to deleteMovie
+      console.log("Movie deleted successfully:", movieTitle);
+    } catch (error) {
+      console.error("Error deleting movie:", error);
+    }
+  };
 
   useEffect(() => {
     getAdminById()
@@ -109,7 +124,7 @@ const AdminProfile = () => {
                       src={movie.posterUrl} // Assuming movie object has posterUrl
                       alt={movie.title}
                       sx={{
-                        height: 80, // Adjust image height as needed
+                        height: 80,
                         width: 60, // Adjust image width as needed
                         marginRight: 2, // Spacing between image and text
                         borderRadius: 2,
@@ -119,6 +134,10 @@ const AdminProfile = () => {
                       primary={`Movie: ${movie.title}`}
                       primaryTypographyProps={{ fontWeight: "600" }}
                     />
+                    {console.log(movie.title)}
+                    <Button onClick={() => handleDelete(movie.title)}>
+                      <DeleteIcon />
+                    </Button>
                   </ListItem>
                 ))}
               </List>

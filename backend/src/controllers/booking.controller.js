@@ -5,53 +5,96 @@ import Movie from "../models/Movies.js";
 import ApiError from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
-const bookMovie = asyncHandler(async (req, res) => {
-  const userId = req.user._id;
-  console.log(userId);
-  const { movieId, date, seatNumber } = req.body;
-  let existingMovie;
-
-  try {
-    existingMovie = await Movie.findById(movieId);
-  } catch (error) {
-    return res.send(err.message);
-  }
-  if (!existingMovie) {
-    return res.status(404).json({ message: "Movie not found by given id" });
-  }
-  const newBooking = new Booking({
+const createBooking = asyncHandler(async (req, res) => {
+  const {
     movie: movieId,
-    date,
-    seatNumber,
     user: userId,
-  });
+    showingDate,
+    seats,
+    ticketPrice,
+  } = req.body;
 
-  const existingUser = await User.findById(userId);
+  if (!movieId || !userId || !showingDate || !seats || !Array.isArray(seats)) {
+    throw new ApiError(400, "Missing required booking information");
+  }
 
-  let session;
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
   try {
-    session = await mongoose.startSession();
-    session.startTransaction();
+    const movie = await Movie.findById(movieId).session(session);
 
-    // Update user and movie bookings
-    existingUser.bookings.push(newBooking);
-    existingMovie.bookings.push(newBooking);
+    if (!movie) {
+      throw new ApiError(404, "Movie not found");
+    }
 
-    await newBooking.save({ session });
-    await existingUser.save({ session });
-    await existingMovie.save({ session });
+    const showing = movie.showings.find(
+      (s) => s.date.toISOString() === new Date(showingDate).toISOString(), // VERY IMPORTANT: Compare dates carefully
+    );
+
+    if (!showing) {
+      throw new ApiError(400, "Invalid showing date");
+    }
+
+    // Clone available seats to avoid modifying the original array directly
+    let availableSeats = [...showing.availableSeats];
+    const bookedSeats = [];
+
+    for (const seat of seats) {
+      const index = availableSeats.indexOf(seat);
+      if (index === -1) {
+        throw new ApiError(400, `Seat ${seat} is not available`);
+      }
+      bookedSeats.push(availableSeats.splice(index, 1)[0]);
+    }
+
+    // Calculate total price (replace with your actual pricing logic)
+
+    // Update the movie's showings with the booked seats removed and use optimistic concurrency control
+    const updatedMovie = await Movie.findOneAndUpdate(
+      {
+        _id: movieId,
+        "showings._id": showing._id,
+        "showings.availableSeats": { $all: bookedSeats },
+      },
+      {
+        $pull: {
+          "showings.$.availableSeats": { $in: bookedSeats },
+        },
+      },
+      { new: true, session: session },
+    );
+
+    if (!updatedMovie) {
+      throw new ApiError(
+        409,
+        "Seats are no longer available (concurrency issue)",
+      );
+    }
+
+    const booking = new Booking({
+      movie: movieId,
+      user: userId,
+      showingDate: showingDate,
+      seats: bookedSeats,
+      totalPrice: totalPrice,
+    });
+
+    await booking.save({ session: session });
 
     await session.commitTransaction();
-    res
-      .status(201)
-      .json({ message: "Booking successful", booking: newBooking });
-  } catch (err) {
-    console.error("Transaction error:", err);
 
-    if (session) await session.abortTransaction();
-    next(new ApiError(500, "Failed to create booking"));
+    res.status(201).json({
+      success: true,
+      message: "Booking created successfully",
+      data: booking,
+    });
+  } catch (error) {
+    await session.abortTransaction();
+    console.error("Error creating booking:", error);
+    throw new ApiError(500, `Failed to create booking: ${error.message}`);
   } finally {
-    if (session) session.endSession();
+    session.endSession();
   }
 });
 

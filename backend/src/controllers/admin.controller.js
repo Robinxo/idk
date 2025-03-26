@@ -41,13 +41,15 @@ const loginAdmin = asyncHandler(async (req, res) => {
 
   // Generate token
   const token = existingAdmin.generateAccessToken();
-  return res
-    .status(200)
-    .json({
-      message: "Authentication Successful",
-      token,
-      id: existingAdmin._id,
-    });
+  res.cookie("token", token, {
+    httpOnly: true,
+    maxAge: 15 * 60 * 1000,
+  });
+  return res.status(200).json({
+    message: "Authentication Successful",
+    token,
+    id: existingAdmin._id,
+  });
 });
 
 const getAllAdmin = asyncHandler(async (req, res) => {

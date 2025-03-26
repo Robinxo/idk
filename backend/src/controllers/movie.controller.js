@@ -4,18 +4,54 @@ import mongoose from "mongoose";
 import { Admin } from "../models/Admin.js";
 import ApiError from "../utils/ApiError.js";
 
+function generateSeatNumbers(numberOfSeats) {
+  const seats = [];
+  for (let i = 1; i <= numberOfSeats; i++) {
+    seats.push(i);
+  }
+  return seats;
+}
 const addMovie = asyncHandler(async (req, res) => {
   const adminId = req.admin;
-  const { title, description, actors, releaseDate, posterUrl } = req.body;
+  const {
+    title,
+    description,
+    actors,
+    releaseDate,
+    posterUrl,
+    showings,
+    ticketPrice,
+  } = req.body;
   if ([title, description, posterUrl].some((field) => field?.trim() === "")) {
     throw new ApiError(400, "All fields are required");
   }
+  if (!showings && !Array.isArray(showings)) {
+    throw new ApiError(400, "Showings must be an array");
+  }
+  if (showings.length === 0) {
+    throw new ApiError(400, "At least one showing is required");
+  }
+
+  if (actors && !Array.isArray(actors)) {
+    throw new ApiError(400, "Actors must be an array");
+  }
+  showings.forEach((showing, index) => {
+    if (!showing.date || typeof showing.numberOfSeats !== "number") {
+      throw new ApiError(400, `Invalid showing data at index ${index}`);
+    }
+  });
+
   const existedMovie = await Movies.findOne({
     $or: [{ title, description, actors, posterUrl }],
   });
   if (existedMovie) {
     throw new ApiError(409, "Movie already exist!");
   }
+  const showingWithSeats = showings.map((showing) => ({
+    date: showing.date,
+    availableSeats: generateSeatNumbers(showing.numberOfSeats),
+  }));
+
   const newMovie = new Movies({
     title,
     description,
@@ -23,7 +59,10 @@ const addMovie = asyncHandler(async (req, res) => {
     posterUrl,
     releaseDate,
     admin: adminId,
+    showings: showingWithSeats,
+    ticketPrice,
   });
+
   const session = await mongoose.startSession();
   session.startTransaction();
   try {
@@ -51,7 +90,7 @@ const deleteMovie = asyncHandler(async (req, res) => {
   if ([title].some((field) => field?.trim() === "")) {
     throw new ApiError(400, "All fields are required");
   }
-  const movie = await Movie.findOneAndDelete({ title });
+  const movie = await Movies.findOneAndDelete({ title });
   if (!movie) {
     throw new ApiError(404, "Movie not found");
   }

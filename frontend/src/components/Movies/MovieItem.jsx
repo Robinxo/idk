@@ -1,3 +1,4 @@
+import { FormatBold } from "@mui/icons-material";
 import {
   Button,
   Card,
@@ -8,13 +9,13 @@ import {
 import React from "react";
 import { Link } from "react-router-dom";
 
-const MovieItem = ({ title, releaseDate, posterUrl, id }) => {
+const MovieItem = ({ title, releaseDate, posterUrl, id, ticketPrice }) => {
   return (
     <Card
       sx={{
         width: 250,
         margin: 2,
-        height: 550,
+        height: 650,
         borderRadius: 5,
         ":hover": { boxShadow: "10px 10px 20px #ccc" },
       }}
@@ -26,6 +27,14 @@ const MovieItem = ({ title, releaseDate, posterUrl, id }) => {
         </Typography>
         <Typography variant="body2" color="text.secondary">
           {new Date(releaseDate).toDateString()}
+        </Typography>
+        <br></br>
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          sx={{ fontWeight: "bold", topmargin: 2 }}
+        >
+          {ticketPrice}₹
         </Typography>
       </CardContent>
       <CardActions>

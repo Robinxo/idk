@@ -6,8 +6,9 @@ import ApiError from "../utils/ApiError.js";
 import "dotenv/config";
 
 const authAdmin = asyncHandler(async (req, res, next) => {
-  // const authHeaders = req.headers.authorization;
-  const token = req.cookies.token;
+  const token =
+    req.headers.authorization?.replace("Bearer ", "") || req.cookies.token;
+  // const token = req.cookies.token;
 
   if (!token) {
     throw new ApiError(401, "Unauthorized");

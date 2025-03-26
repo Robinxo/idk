@@ -27,6 +27,11 @@ const MovieSchema = new mongoose.Schema(
     featured: {
       type: Boolean,
     },
+    ticketPrice: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
     bookings: [
       {
         type: mongoose.Types.ObjectId,
@@ -39,6 +44,12 @@ const MovieSchema = new mongoose.Schema(
       // For future need to add the admin authenticator
       required: true,
     },
+    showings: [
+      {
+        date: { type: Date, required: true },
+        availableSeats: [{ type: Number, min: 1 }],
+      },
+    ],
   },
   {
     timestamps: true,

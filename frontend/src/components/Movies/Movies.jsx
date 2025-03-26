@@ -18,10 +18,13 @@ const Movies = () => {
         variant="h4"
         padding={2}
         textAlign="center"
-        bgcolor={"#900C3F"}
+        bgcolor={"#1976d2"}
         width="40%"
         color="white"
         margin={"auto"}
+        sx={{
+          borderRadius: 3,
+        }}
       >
         All Movies
       </Typography>
@@ -40,6 +43,7 @@ const Movies = () => {
             title={item.title}
             posterUrl={item.posterUrl}
             releaseDate={item.releaseDate}
+            ticketPrice={item.ticketPrice}
             key={index}
           />
         ))}

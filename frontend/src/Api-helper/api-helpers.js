@@ -68,6 +68,8 @@ export const addMovie = async (data) => {
         releaseDate: data.releaseDate,
         posterUrl: data.posterUrl,
         actors: data.actors,
+        showings: data.showings,
+        ticketPrice: data.ticketPrice,
         admin: localStorage.getItem("adminId"),
       },
       {
@@ -93,6 +95,31 @@ export const getMoviedetails = async (id) => {
   }
   const resData = await res.data;
   return resData;
+};
+export const deleteMovie = async (data) => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("No token found in localStorage");
+    }
+
+    const res = await axios.delete("/movies/delete", {
+      // URL without title
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      data: {
+        // Send the title in the request body
+        title: data.title,
+      },
+    });
+
+    const resData = res.data;
+    return resData;
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
 };
 
 export const sendAdminAuthRequest = async (data) => {

@@ -8,21 +8,29 @@ const BookingSchema = new mongoose.Schema(
       required: true,
       description: "The ID of the movie being booked.",
     },
-    date: {
-      type: Date,
-      required: true,
-      description: "The date and time of the booking.",
-    },
-    seatNumber: {
-      type: Number,
-      required: true,
-      description: "The seat number assigned for the booking.",
-    },
     user: {
       type: mongoose.Types.ObjectId,
       ref: "User",
       required: true,
       description: "The ID of the user who made the booking.",
+    },
+
+    showingDate: {
+      type: Date,
+      required: true,
+      description: "The date and time of the booking.",
+    },
+    seats: [
+      {
+        type: Number,
+        required: true,
+        min: 1,
+        description: "The seat number assigned for the booking.",
+      },
+    ],
+    bookingDate: {
+      type: Date,
+      default: Date.now,
     },
   },
   {
