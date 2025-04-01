@@ -22,8 +22,8 @@ const signUp = asyncHandler(async (req, res) => {
   console.log("User created successfully");
   console.log(newUser);
 });
-// Login user
 
+// Login user
 const logIn = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
   if ([email, password].some((field) => field?.trim() === "")) {
@@ -43,19 +43,19 @@ const logIn = asyncHandler(async (req, res, next) => {
   if (!isPasswordValid) {
     throw new ApiError(401, "Invalid password!");
   }
-  return res
-    .status(200)
-    .json({ message: "Login Successful", id: existedUser._id });
-  //  const token = existedUser.generateAccessToken();
+  const token = existedUser.generateAccessToken();
 
-  // res.cookie("token", token, {
-  //   httpOnly: true,
-  //   secure: process.env.NODE_ENV === "production",
-  //   samesite: "strict",
-  //   maxAge: 12 * 60 * 60 * 1000, // 12 hours
-  // });
-
-  return res.status(200).json({ message: "Login Successful" });
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    samesite: "strict",
+    maxAge: 12 * 60 * 60 * 1000, // 12 hours
+  });
+  return res.status(200).json({
+    message: "Authentication Successful",
+    token,
+    id: existedUser._id,
+  });
 });
 
 // get all users

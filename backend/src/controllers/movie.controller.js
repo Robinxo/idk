@@ -11,6 +11,7 @@ function generateSeatNumbers(numberOfSeats) {
   }
   return seats;
 }
+
 const addMovie = asyncHandler(async (req, res) => {
   const adminId = req.admin;
   const {
@@ -22,6 +23,7 @@ const addMovie = asyncHandler(async (req, res) => {
     showings,
     ticketPrice,
   } = req.body;
+
   if ([title, description, posterUrl].some((field) => field?.trim() === "")) {
     throw new ApiError(400, "All fields are required");
   }
@@ -36,6 +38,7 @@ const addMovie = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Actors must be an array");
   }
   showings.forEach((showing, index) => {
+    console.log(`Showing at index ${index}:`, showing);
     if (!showing.date || typeof showing.numberOfSeats !== "number") {
       throw new ApiError(400, `Invalid showing data at index ${index}`);
     }
@@ -49,26 +52,34 @@ const addMovie = asyncHandler(async (req, res) => {
   }
   const showingWithSeats = showings.map((showing) => ({
     date: showing.date,
-    availableSeats: generateSeatNumbers(showing.numberOfSeats),
+    availableSeats: generateSeatNumbers(showing.numberOfSeats).map(
+      (seatNumber) => ({
+        seatNumber,
+        isBooked: false,
+      }),
+    ),
   }));
+  const adminIdnew = adminId._id;
 
+  console.log(adminIdnew);
   const newMovie = new Movies({
     title,
     description,
     actors,
     posterUrl,
     releaseDate,
-    admin: adminId,
+    admin: adminIdnew,
     showings: showingWithSeats,
     ticketPrice,
   });
 
+  console.log("New movie data:", newMovie);
   const session = await mongoose.startSession();
   session.startTransaction();
   try {
     await newMovie.save({ session });
     await Admin.findByIdAndUpdate(
-      adminId,
+      adminIdnew,
       { $push: { addedMovies: newMovie._id } },
       { session },
     );
@@ -81,7 +92,7 @@ const addMovie = asyncHandler(async (req, res) => {
     await session.abortTransaction();
     throw new ApiError(500, "Failed to add movie");
   } finally {
-    session.endSession();
+    await session.endSession();
   }
 });
 

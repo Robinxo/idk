@@ -20,6 +20,7 @@ const authAdmin = asyncHandler(async (req, res, next) => {
       throw new ApiError(404, "Admin not found");
     }
     req.admin = admin;
+   /// console.log("Admin authenticated:", admin);
     next();
   } catch (error) {
     throw new ApiError(403, "Invalid or expired token");
@@ -35,7 +36,6 @@ const authUser = asyncHandler(async (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findById(decoded._id);
-    console.log(user);
     if (!user) {
       throw new ApiError(404, "User not found");
     }

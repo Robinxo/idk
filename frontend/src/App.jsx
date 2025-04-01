@@ -9,8 +9,8 @@ import "./App.css";
 import Homepage from "./components/Homepage.jsx";
 import Movies from "./components/Movies/Movies.jsx";
 import AddMovies from "./components/Movies/AddMovie.jsx";
-import { Slider } from "@mui/material";
 import HorizontalLinearStepper from "./components/slider.jsx";
+import Booking from "./components/Bookings/Booking.jsx";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -29,6 +29,7 @@ function App() {
             <Route path="/admin" element={<AdminProfile />} />
             <Route path="/adminLogin" element={<Admin />} />
             <Route path="/user" element={<UserProfile />} />
+            <Route path="/booking/:id" element={<Booking />} />
           </Routes>
         </section>
       </div>

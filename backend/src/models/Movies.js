@@ -1,5 +1,16 @@
 import mongoose from "mongoose";
 
+const SeatSchema = new mongoose.Schema({
+  seatNumber: { type: Number, required: true, min: 1 },
+  isBooked: { type: Boolean, default: false },
+});
+
+const ShowingSchema = new mongoose.Schema({
+  date: { type: Date, required: true, index: true },
+  availableSeats: [SeatSchema], // Now stores seat objects instead of just numbers
+  version: { type: Number, default: 0 }, // Helps prevent race conditions
+});
+
 const MovieSchema = new mongoose.Schema(
   {
     title: {
@@ -41,19 +52,20 @@ const MovieSchema = new mongoose.Schema(
     admin: {
       type: mongoose.Types.ObjectId,
       ref: "Admin",
-      // For future need to add the admin authenticator
       required: true,
     },
-    showings: [
-      {
-        date: { type: Date, required: true },
-        availableSeats: [{ type: Number, min: 1 }],
-      },
-    ],
+    showings: [ShowingSchema],
   },
   {
     timestamps: true,
   },
 );
+
+// Ensure each seat number is unique per showing
+MovieSchema.index(
+  { "showings._id": 1, "showings.availableSeats.seatNumber": 1 },
+  { unique: true },
+);
+
 const Movies = mongoose.model("Movies", MovieSchema);
 export default Movies;

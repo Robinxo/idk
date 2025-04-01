@@ -25,6 +25,7 @@ const BookingSchema = new mongoose.Schema(
         type: Number,
         required: true,
         min: 1,
+        unique: true,
         description: "The seat number assigned for the booking.",
       },
     ],
@@ -32,9 +33,21 @@ const BookingSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    totalPrice: {
+      type: Number,
+      required: true,
+      min: 0,
+      description: "The total price of the booking.",
+    },
+    showingId: {
+      type: mongoose.Types.ObjectId,
+      required: true,
+      ref: "Showing",
+      description: "the id of the showing from the movie document.",
+    },
   },
   {
-    timestamps: true, // Automatically adds createdAt and updatedAt fields
+    timestamps: true,
   },
 );
 const Booking = mongoose.model("Booking", BookingSchema);

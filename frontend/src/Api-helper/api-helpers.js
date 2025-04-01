@@ -136,3 +136,17 @@ export const sendAdminAuthRequest = async (data) => {
   const resData = await res.data;
   return resData;
 };
+
+export const newBooking = async (data) => {
+  const res = await axios
+    .post("/bookings/bookMovie", {
+      movie: data.movie,
+      user: locvalStorage.getItem("userId"),
+      showingDate,
+      seats: bookedSeats,
+      totalPrice,
+    })
+    .catch((err) => console.log(err));
+  const resData = await res.data;
+  return resData;
+};
