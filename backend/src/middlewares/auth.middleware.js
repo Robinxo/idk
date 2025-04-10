@@ -20,7 +20,6 @@ const authAdmin = asyncHandler(async (req, res, next) => {
       throw new ApiError(404, "Admin not found");
     }
     req.admin = admin;
-   /// console.log("Admin authenticated:", admin);
     next();
   } catch (error) {
     throw new ApiError(403, "Invalid or expired token");
@@ -28,7 +27,8 @@ const authAdmin = asyncHandler(async (req, res, next) => {
 });
 
 const authUser = asyncHandler(async (req, res, next) => {
-  const token = req.cookies.token;
+  const token =
+    req.headers.authorization?.replace("Bearer ", "") || req.cookies.token;
 
   if (!token) {
     throw new ApiError(401, "Unauthorized");

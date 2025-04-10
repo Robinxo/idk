@@ -9,7 +9,6 @@ import "./App.css";
 import Homepage from "./components/Homepage.jsx";
 import Movies from "./components/Movies/Movies.jsx";
 import AddMovies from "./components/Movies/AddMovie.jsx";
-import HorizontalLinearStepper from "./components/slider.jsx";
 import Booking from "./components/Bookings/Booking.jsx";
 
 function App() {
@@ -22,7 +21,6 @@ function App() {
         <section>
           <Routes>
             <Route path="/" element={<Homepage />} />
-            <Route path="/ex" element={<HorizontalLinearStepper />} />
             <Route path="/movies" element={<Movies />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/add" element={<AddMovies />} />

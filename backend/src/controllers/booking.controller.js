@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 import Booking from "../models/Booking.js";
+import { User } from "../models/User.js";
 import Movie from "../models/Movies.js";
 import ApiError from "../utils/ApiError.js";
-import { User } from "../models/User.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
 const createBooking = asyncHandler(async (req, res) => {
@@ -30,33 +30,21 @@ const createBooking = asyncHandler(async (req, res) => {
     if (!movie) throw new ApiError(404, "Movie not found");
 
     const showing = movie.showings.find(
-      (s) => s.date.toISOString() === new Date(showingDate).toISOString(),
+      (s) =>
+        s.date.toISOString().split("T")[0] === new Date(showingDate).toISOString().split("T")[0]
     );
     if (!showing) throw new ApiError(400, "Invalid showing date");
 
     let availableSeats = showing.availableSeats;
-
     const bookedSeats = [];
-
-    console.log(
-      "All available seats before booking:",
-      availableSeats.map((s) => ({
-        seatNumber: s.seatNumber,
-        isBooked: s.isBooked,
-      })),
-    );
-
+console.log(showing)
     for (const seatNumber of seats) {
       console.log(`Checking availability of seat: ${seatNumber}`);
-      //      console.log("Available seats:", availableSeats);
+      console.log("Available seats:", availableSeats);
 
-      const seatNum = Number(seatNumber);
       const seat = availableSeats.find(
-        (s) => s.seatNumber === seatNum && !s.isBooked,
+        (s) => s.seatNumber === seatNumber && !s.isBooked
       );
-      //      const seat = availableSeats.find(
-      //       (s) => s.seatNumber === seatNumber && !s.isBooked,
-      //     );
       if (!seat) {
         console.log(`Seat ${seatNumber} is already booked or does not exist.`);
         throw new ApiError(400, `Seat ${seatNumber} is not available`);
@@ -71,7 +59,7 @@ const createBooking = asyncHandler(async (req, res) => {
       {
         _id: movieId,
         "showings._id": showing._id,
-        //        "showings.availableSeats.seatNumber": { $all: bookedSeats },
+        "showings.availableSeats.seatNumber": { $all: bookedSeats },
       },
       {
         $set: {
@@ -81,10 +69,8 @@ const createBooking = asyncHandler(async (req, res) => {
       {
         new: true,
         session,
-        arrayFilters: [
-          { "seat.seatNumber": { $in: bookedSeats }, "seat.isBooked": false },
-        ],
-      },
+        arrayFilters: [{ "seat.seatNumber": { $in: bookedSeats } }],
+      }
     );
 
     if (!updatedMovie) {
@@ -104,11 +90,6 @@ const createBooking = asyncHandler(async (req, res) => {
     });
 
     await booking.save({ session });
-    await User.findByIdAndUpdate(
-      userId,
-      { $push: { bookings: booking._id } },
-      { session },
-    );
 
     await session.commitTransaction();
     res.status(201).json({

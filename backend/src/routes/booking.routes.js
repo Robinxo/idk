@@ -8,8 +8,6 @@ import {
 const bookingrouter = Router();
 
 bookingrouter.route("/bookMovie").post(authUser, createBooking);
-bookingrouter
-  .route("/deleteBooking/:bookingId")
-  .delete(authUser, deleteBooking);
+bookingrouter.route("/deleteBooking/:bookingId").delete(authUser, deleteBooking);
 
 export default bookingrouter;

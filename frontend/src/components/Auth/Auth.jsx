@@ -23,6 +23,14 @@ const Auth = () => {
     } else {
       console.error("Error: `id` is missing in API response");
     }
+    
+    // Store the token in localStorage
+    if (data.token) {
+      localStorage.setItem("token", data.token);
+      console.log("Token stored in localStorage");
+    } else {
+      console.error("Error: `token` is missing in API response");
+    }
   };
 
   const getData = (data) => {

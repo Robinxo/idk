@@ -41,6 +41,7 @@ const loginAdmin = asyncHandler(async (req, res) => {
 
   // Generate token
   const token = existingAdmin.generateAccessToken();
+
   res.cookie("token", token, {
     httpOnly: true,
     maxAge: 15 * 60 * 1000,

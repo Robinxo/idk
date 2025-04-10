@@ -27,6 +27,7 @@ const AddMovies = () => {
     posterUrl: "",
     releaseDate: "",
     featured: false,
+    ticketPrice: "",
   });
   const [actors, setActors] = useState([]);
   const [actor, setActor] = useState("");
@@ -75,7 +76,7 @@ const AddMovies = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!inputs.title || !inputs.description || !inputs.releaseDate) {
+    if (!inputs.title || !inputs.description || !inputs.releaseDate || !inputs.ticketPrice) {
       alert("Please fill all required fields.");
       return;
     }
@@ -172,6 +173,20 @@ const AddMovies = () => {
                 }
                 name="featured"
                 sx={{ ml: 1 }}
+              />
+            </Box>
+
+            {/* Ticket Price */}
+            <Box>
+              <FormLabel sx={labelProps}>Ticket Price</FormLabel>
+              <TextField
+                fullWidth
+                type="number"
+                value={inputs.ticketPrice}
+                onChange={handleChange}
+                name="ticketPrice"
+                variant="outlined"
+                inputProps={{ min: 0, step: 0.01 }}
               />
             </Box>
 

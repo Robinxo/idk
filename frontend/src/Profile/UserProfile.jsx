@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import {
-  //  deleteBooking,
-  // getUserBooking,
+  deleteBooking,
+  getUserBooking,
   getUserDetails,
 } from "../Api-helper/api-helpers.js";
 import {
@@ -16,38 +16,29 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 
 const UserProfile = () => {
+  const [Bookings, setBookings] = useState();
   const [User, setUser] = useState();
 
-  // Dummy booking data
-  const dummyBookings = [
-    {
-      _id: "1",
-      movie: { title: "Avengers: Endgame" },
-      seatNumber: "A1",
-      date: new Date(),
-    },
-    {
-      _id: "2",
-      movie: { title: "Spider-Man: No Way Home" },
-      seatNumber: "B2",
-      date: new Date(),
-    },
-  ];
-
   useEffect(() => {
+    getUserBooking()
+      .then((res) => setBookings(res.bookings))
+      .catch((err) => {
+        console.log(err);
+      });
+
     getUserDetails()
-      .then((res) => setUser(res.users))
+      .then((res) => setUser(res.user))
       .catch((err) => console.log(err));
   }, []);
 
   console.log(User);
-  // console.log(Bookings);
+  console.log(Bookings);
 
   const handleDelete = (id) => {
-    console.log("Delete booking with id:", id);
-    // Implement delete logic when backend is ready
+    deleteBooking(id)
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err));
   };
-
   return (
     <Box width={"100%"} display="flex">
       <Fragment>
@@ -89,8 +80,7 @@ const UserProfile = () => {
           </Box>
         )}
 
-        {/* Using dummy bookings instead of actual bookings */}
-        {dummyBookings && dummyBookings.length > 0 && (
+        {Bookings && Bookings.length > 0 && (
           <Box width={"70%"}>
             <Typography
               variant="h3"
@@ -108,9 +98,8 @@ const UserProfile = () => {
               marginRight={10}
             >
               <List>
-                {dummyBookings.map((booking, index) => (
+                {Bookings.map((booking, index) => (
                   <ListItem
-                    key={booking._id}
                     sx={{
                       bgcolor: "#00d386",
                       color: "white",
@@ -135,7 +124,7 @@ const UserProfile = () => {
                         textAlign: "left",
                       }}
                     >
-                      Seat: {booking.seatNumber}
+                      Seat: {booking.seats}
                     </ListItemText>
 
                     <ListItemText
@@ -145,12 +134,13 @@ const UserProfile = () => {
                         textAlign: "left",
                       }}
                     >
-                      Date: {new Date(booking.date).toDateString()}
+                      Date: {new Date(booking.showingDate).toDateString()}
                     </ListItemText>
                     <IconButton
                       onClick={() => handleDelete(booking._id)}
                       color="error"
                     >
+                      {console.log(booking._id)}
                       <DeleteForeverIcon color="red" />
                     </IconButton>
                   </ListItem>

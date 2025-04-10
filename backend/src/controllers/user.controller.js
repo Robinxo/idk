@@ -2,6 +2,7 @@ import { User } from "../models/User.js";
 import ApiError from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import bcrypt from "bcrypt";
+import Bookings from "../models/Booking.js";
 
 // Register user
 
@@ -26,6 +27,7 @@ const signUp = asyncHandler(async (req, res) => {
 // Login user
 const logIn = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
+
   if ([email, password].some((field) => field?.trim() === "")) {
     throw new ApiError(400, "All fields are required");
   }
@@ -39,7 +41,7 @@ const logIn = asyncHandler(async (req, res, next) => {
   if (!existedUser) {
     throw new ApiError(401, "User not found!");
   }
-  const isPasswordValid = bcrypt.compare(password, existedUser.password);
+  const isPasswordValid = await bcrypt.compare(password, existedUser.password);
   if (!isPasswordValid) {
     throw new ApiError(401, "Invalid password!");
   }
@@ -47,9 +49,9 @@ const logIn = asyncHandler(async (req, res, next) => {
 
   res.cookie("token", token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    samesite: "strict",
-    maxAge: 12 * 60 * 60 * 1000, // 12 hours
+    maxAge: 15 * 60 * 1000,
+    sameSite: "lax", // or "strict" if you want stricter rules
+    secure: false, // false if testing over HTTP
   });
   return res.status(200).json({
     message: "Authentication Successful",
@@ -99,5 +101,26 @@ const getUserById = asyncHandler(async (req, res) => {
   const user = await User.findById(id);
   res.status(200).json({ user });
 });
+const getBookingofUser = async (req, res, next) => {
+  const id = req.params.id;
+  let bookings;
+  try {
+    bookings = await Bookings.find({ user: id }).populate("user movie");
+  } catch (err) {
+    return console.log(err);
+  }
+  if (!bookings) {
+    return res.status(500).json({ message: "Uexpected Error Occured." });
+  }
+  return res.status(201).json({ bookings });
+};
 
-export { signUp, logIn, getAllUsers, updateUser, deleteUser, getUserById };
+export {
+  signUp,
+  logIn,
+  getAllUsers,
+  updateUser,
+  deleteUser,
+  getUserById,
+  getBookingofUser,
+};

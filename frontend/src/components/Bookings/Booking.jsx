@@ -6,36 +6,73 @@ import {
   Button,
   Dialog,
   FormLabel,
-  TextField,
+  MenuItem,
+  Select,
   Typography,
 } from "@mui/material";
-// import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useSelector } from "react-redux";
+
 const labelStyle = { mt: 4, mb: 2 };
 
 const Booking = () => {
   const isUserLoggedIn = useSelector((state) => state.user.isLoggedIn);
   const navigate = useNavigate();
-  let Id = useParams().id;
+  const { id: Id } = useParams();
   const [inputs, setInputs] = useState({ seatNumber: "", date: "" });
-  const [movie, setmovie] = useState();
+  const [movie, setMovie] = useState();
+  const [availableDates, setAvailableDates] = useState([]);
+  const [availableSeats, setAvailableSeats] = useState([]);
+
   useEffect(() => {
     getMoviedetails(Id).then((res) => {
-      setmovie(res.movie);
+      setMovie(res.movie);
+      setAvailableDates(res.movie.showings.map((show) => show.date));
     });
   }, [Id]);
+
+  useEffect(() => {
+    if (movie && inputs.date) {
+      const selectedShow = movie.showings.find(
+        (show) =>
+          new Date(show.date).toISOString().split("T")[0] === inputs.date,
+      );
+      if (selectedShow) {
+        setAvailableSeats(
+          selectedShow.availableSeats.filter((seat) => !seat.isBooked),
+        );
+      }
+    }
+  }, [inputs.date, movie]);
+
   const handleChange = (e) => {
     setInputs((prevState) => ({
       ...prevState,
       [e.target.name]: e.target.value,
     }));
   };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(inputs);
-    newBooking({ ...inputs, movie: movie._id })
-      .then((res) => console.log(res))
-      .catch((err) => console.log(err));
+
+    const bookingData = {
+      movie: movie._id, // Movie ID
+      user: localStorage.getItem("userId"), // User ID from localStorage
+      showingDate: inputs.date, // Selected date
+      seats: [inputs.seatNumber], // Convert seatNumber to an array
+      ticketPrice: movie.ticketPrice, // Ticket price from movie details
+    };
+
+    console.log("Booking data:", bookingData); // Debugging log
+
+    newBooking(bookingData)
+      .then((res) => {
+        console.log("Booking successful:", res);
+        alert("Booking created successfully!");
+      })
+      .catch((err) => {
+        console.error("Error creating booking:", err.response?.data || err.message);
+        alert("Failed to create booking. Please try again.");
+      });
   };
 
   return (
@@ -49,19 +86,20 @@ const Booking = () => {
             <Box
               display={"flex"}
               flexDirection={"column"}
-              width={"50vw"}
+              width={"30vw"}
               justifyContent={"center"}
             >
-              <Box width={"40vw"} height={"50vh"} margin={1.5}>
+              <Box width={"40vw"} height={"52vh"} margin={1.5}>
                 <img
                   src={movie.posterUrl}
                   alt={movie.title}
-                  width={"100%"}
-                  height={"100%"}
+                  width={"50%"}
+                  height={"50%"}
                 />
               </Box>
               <Typography
-                variant="body"
+                variant="h6"
+                display={"flex"}
                 fontStyle={"italic"}
                 margin={1.5}
                 padding={1}
@@ -71,11 +109,13 @@ const Booking = () => {
               </Typography>
               <Box display={"flex"} flexWrap={"wrap"} margin={1}>
                 <Typography fontStyle={"italic"}>Cast:&nbsp; </Typography>
-                {movie.actors.map((item) => (
-                  <Typography fontStyle={"italic"}>{item} &nbsp;</Typography>
+                {movie.actors.map((item, idx) => (
+                  <Typography key={idx} fontStyle={"italic"}>
+                    {item} &nbsp;
+                  </Typography>
                 ))}
               </Box>
-              <Typography margin={1} fontStyle={"italic"}>
+              <Typography margin={1} display={"flex"} fontStyle={"italic"}>
                 Release Date: {new Date(movie.releaseDate).toDateString()}
               </Typography>
             </Box>
@@ -86,7 +126,7 @@ const Booking = () => {
                 justifyContent={"center"}
                 alignContent={"center"}
                 margin={5}
-                width={"40vw"}
+                width={"35vw"}
                 padding={3}
                 borderRadius={5}
                 boxShadow={"10px 10px 10px #ccc"}
@@ -94,32 +134,41 @@ const Booking = () => {
                 <Typography variant="h5" align="center" mb={1}>
                   Booking Details
                 </Typography>
-                <FormLabel sx={labelStyle}>Seat Number</FormLabel>
-                <TextField
-                  value={inputs.seatNumber}
-                  onChange={handleChange}
-                  name="seatNumber"
-                  type={"number"}
-                  margin="normal"
-                  variant="standard"
-                />
                 <FormLabel sx={labelStyle}>Pick a Date</FormLabel>
-                <TextField
+                <Select
                   value={inputs.date}
                   onChange={handleChange}
                   name="date"
-                  type={"date"}
-                  margin="normal"
                   variant="standard"
-                />
-                {/* <Box value={inputs.date} onChange={handleChange}>
-                <DatePicker />
-              </Box> */}
+                >
+                  {availableDates.map((date, idx) => (
+                    <MenuItem
+                      key={idx}
+                      value={new Date(date).toISOString().split("T")[0]}
+                    >
+                      {new Date(date).toLocaleString()}
+                    </MenuItem>
+                  ))}
+                </Select>
+                <FormLabel sx={labelStyle}>Seat Number</FormLabel>
+                <Select
+                  value={inputs.seatNumber}
+                  onChange={handleChange}
+                  name="seatNumber"
+                  variant="standard"
+                >
+                  {availableSeats.map((seat) => (
+                    <MenuItem key={seat._id} value={seat.seatNumber}>
+                      {seat.seatNumber}
+                    </MenuItem>
+                  ))}
+                </Select>
                 <Button
                   sx={{ borderRadius: 5, margin: 6 }}
                   variant="outlined"
                   color="success"
                   type="submit"
+                  disabled={!inputs.date || !inputs.seatNumber}
                 >
                   Confirm
                 </Button>
@@ -130,36 +179,34 @@ const Booking = () => {
       )}
 
       {!isUserLoggedIn && (
-        <>
-          <Dialog open={true} PaperProps={{ style: { borderRadius: 10 } }}>
-            <Box margin={4}>
-              <Typography variant="h5" padding={1}>
-                User Not Logged In
-              </Typography>
-              <Typography variant="h6" padding={1}>
-                You need to login to proceed further.
-              </Typography>
-              <Box align={"center"} mt={3}>
-                <Button
-                  onClick={() => navigate("/auth")}
-                  variant="outlined"
-                  color="secondary"
-                  sx={{ borderRadius: 2, margin: 1 }}
-                >
-                  Login
-                </Button>
-                <Button
-                  onClick={() => navigate("/")}
-                  variant="outlined"
-                  color="secondary"
-                  sx={{ borderRadius: 2, margin: 1 }}
-                >
-                  Cancel
-                </Button>
-              </Box>
+        <Dialog open={true} PaperProps={{ style: { borderRadius: 10 } }}>
+          <Box margin={4}>
+            <Typography variant="h5" padding={1}>
+              User Not Logged In
+            </Typography>
+            <Typography variant="h6" padding={1}>
+              You need to login to proceed further.
+            </Typography>
+            <Box align="center" mt={3}>
+              <Button
+                onClick={() => navigate("/auth")}
+                variant="outlined"
+                color="secondary"
+                sx={{ borderRadius: 2, margin: 1 }}
+              >
+                Login
+              </Button>
+              <Button
+                onClick={() => navigate("/")}
+                variant="outlined"
+                color="secondary"
+                sx={{ borderRadius: 2, margin: 1 }}
+              >
+                Cancel
+              </Button>
             </Box>
-          </Dialog>
-        </>
+          </Box>
+        </Dialog>
       )}
     </Box>
   );
