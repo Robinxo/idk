@@ -21,7 +21,7 @@ const AdminSchema = new mongoose.Schema(
     },
     addedMovies: [
       {
-        type: mongoose.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "Movies",
         description: "List of movie references added by the user.",
       },

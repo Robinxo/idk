@@ -3,13 +3,13 @@ import mongoose from "mongoose";
 const BookingSchema = new mongoose.Schema(
   {
     movie: {
-      type: mongoose.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "Movies",
       required: true,
       description: "The ID of the movie being booked.",
     },
     user: {
-      type: mongoose.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
       description: "The ID of the user who made the booking.",
@@ -40,7 +40,7 @@ const BookingSchema = new mongoose.Schema(
       description: "The total price of the booking.",
     },
     showingId: {
-      type: mongoose.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       required: true,
       ref: "Showing",
       description: "the id of the showing from the movie document.",

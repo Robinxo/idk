@@ -28,7 +28,7 @@ const UserSchema = new mongoose.Schema(
     },
     bookings: [
       {
-        type: mongoose.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "Booking",
         description: "List of booking references made by the user.",
       },

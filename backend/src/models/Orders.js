@@ -2,7 +2,7 @@ import mongoose, { Schema } from "mongoose";
 
 const bookingSchema = new Schema({
   movie: {
-    type: mongoose.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: "Movie",
     required: true,
   },
@@ -15,7 +15,7 @@ const bookingSchema = new Schema({
     required: true,
   },
   user: {
-    type: mongoose.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
   },
